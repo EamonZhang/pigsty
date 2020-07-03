@@ -151,10 +151,12 @@ function install_yum_repo() {
 function write_nginx_files() {
 	printf "\033[0;32m[INFO] write_nginx_files: /etc/nginx/conf.d/nginx.conf /www/index.html /www/pigsty.repo  \033[0m\n" >&2
 	rm -rf /etc/nginx/conf.d/*
+        rm -f /etc/nginx/conf.conf
 	mkdir -p /etc/nginx/conf.d/
 
-	if [[ -f /vagrant/control/nginx/nginx.conf ]]; then
-		cp -f /vagrant/control/nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
+	if [[ -f /vagrant/control/nginx/nginx.conf.d ]]; then
+		cp -f /vagrant/control/nginx/nginx.conf.d /etc/nginx/conf.d/nginx.conf
+		cp -f /vagrant/control/nginx/nginx.conf /etc/nginx/nginx.conf
 	else
 		cat >/etc/nginx/conf.d/nginx.conf <<-'EOF'
 			server {
@@ -304,7 +306,7 @@ function yum_bootstrap() {
 		'pgbouncer*' 'pgpool-II-12*' wal2json12 wal2json12-debuginfo pg_repack12 pg_stat_kcache12 pg_stat_kcache12-debuginfo pgrouting_12 pgadmin4 \
 		nginx grafana prometheus2 pushgateway alertmanager \
 		node_exporter postgres_exporter nginx_exporter consul_exporter ping_exporter redis_exporter blackbox_exporter \
-		etcd consul
+		etcd python3-psycopg2  
 	if [[ $? != 0 ]]; then
 		printf "\033[0;31m[ERROR] yum_bootstrap: fail to download yum packages \033[0m\n" >&2
 		return 2
@@ -319,7 +321,8 @@ function yum_bootstrap() {
 	wget https://github.com/cybertec-postgresql/patroni-packaging/releases/download/1.6.4-2/patroni-1.6.4-2.rhel7.x86_64.rpm
 
 	printf "\033[0;32m[INFO] yum_bootstrap: download consul \033[0m\n" >&2
-	wget https://copr-be.cloud.fedoraproject.org/results/harbottle/main/epel-7-x86_64/01309161-consul/consul-1.7.2-1.el7.harbottle.x86_64.rpm
+	#wget https://copr-be.cloud.fedoraproject.org/results/harbottle/main/epel-7-x86_64/01309161-consul/consul-1.7.2-1.el7.harbottle.x86_64.rpm
+        wget https://copr-be.cloud.fedoraproject.org/results/harbottle/main/epel-7-x86_64/01488960-consul/consul-1.8.0-1.el7.harbottle.x86_64.rpm
 
 	# create repo (yum is ready after nginx start)
 	printf "\033[0;32m[INFO] yum_bootstrap: createrepo on /www/pigsty \033[0m\n" >&2
