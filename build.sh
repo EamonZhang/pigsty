@@ -12,7 +12,7 @@ ssh node0 sudo /vagrant/control/setup.sh
 # copy yum cache to localhost to accelerate next bootsrtrap (if not exists)
 if [[ ! -d control/yum ]]; then
 	echo "copy yum cache to localhost ${PWD}/control/yum"
-	scp -r node0:/www/pigsty control/yum
+	scp -r node0:/www/pigsty/* control/yum/
 fi
 
 # init cluster
